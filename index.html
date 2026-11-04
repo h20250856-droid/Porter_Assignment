@@ -574,7 +574,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $("dim").onchange = () => { $("bd")._sk = undefined; render(); };
   const BUILT = DATA, builtLabel = "built-in (cleaned data embedded in this file)";
   LOADER = DataLoader($("dl"), {
-    fileHint: "Porter_Recruitment_Cleaned.xlsx", livePath: "../data/powerbi/Porter_Recruitment_Cleaned.xlsx",
+    fileHint: "Porter_Recruitment_Cleaned.xlsx", livePath: "./Porter_Recruitment_Cleaned.xlsx",
     sheets: { Requisitions: ["req_id", "raised_on", "thread", "function", "grade", "grade_band", "location", "position_type", "criticality", "recruiter", "sla_days", "req_status", "sla_status", "age_days", "time_to_fill_days", "hire_source", "failed_offers", "days_raise_to_hire_applied", "days_applied_to_screened", "days_screened_to_offer", "days_offer_to_accept"],
       Applications: ["req_id", "source", "stage_reached", "offer_status", "offered_ctc", "expected_ctc", "slow_offer_gt21d", "is_joined", "is_backed_out", "r1_interviewer_id", "r1_feedback_lag_days"], Recruiters: ["Recruiter Name", "Monthly Offer Target"] },
     build: buildHiringData, apply: setData, builtin: () => BUILT, builtLabel,
