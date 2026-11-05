@@ -656,4 +656,4 @@ document.addEventListener("DOMContentLoaded", () => {
   LOADER.startLive();
   window.DASH = { setFilters: (o) => FB.setAll(o), loadBuffer: LOADER.loadBuffer, metrics: () => { const c = calc(); return { invited: [c.inv[0].length, c.inv[1].length], responses: [c.resp[0].length, c.resp[1].length], enps: c.q1.map((a) => (a.length ? Math.round(enps(a) * 10) / 10 : null)), q1n: c.q1.map((a) => a.length), paired: c.pa.length }; } };
 });
-</script><script src="nav.js?v=3"></script></body></html>
+</script><script src="nav.js?v=4"></script></body></html>

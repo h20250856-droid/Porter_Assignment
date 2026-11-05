@@ -24,6 +24,15 @@
     ".sn-hit>h2,.sn-hit .hd{background:#fff2a8;color:#111;border-radius:6px}",
     ".sn-miss{opacity:.35}",
     ".sn-flash{animation:snflash 1.3s ease-out}",
+    "#secnav .sn-menu{flex:none;padding:6px 12px;border-radius:8px;border:1px solid var(--accent,#1c5cab);background:var(--surface,#fcfcfb);color:var(--accent,#1c5cab);font:inherit;font-size:13px;font-weight:650;cursor:pointer;white-space:nowrap}",
+    "#secnav .sn-menu[aria-expanded=true]{background:var(--accent,#1c5cab);color:#fff}",
+    "#secnav .sn-panel{position:absolute;left:16px;top:100%;z-index:40;width:min(420px,calc(100% - 32px));max-height:min(60vh,420px);overflow:auto;background:var(--surface,#fcfcfb);border:1px solid var(--grid,#e1e0d9);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.2);padding:6px}",
+    "#secnav .sn-panel[hidden]{display:none}",
+    "#secnav .sn-panel button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 10px;border:0;border-radius:7px;background:none;color:var(--ink,#0b0b0b);font:inherit;font-size:13.5px;cursor:pointer}",
+    "#secnav .sn-panel button:hover{background:var(--wash,#ecebe6)}",
+    "#secnav .sn-panel button.on{background:var(--accent,#1c5cab);color:#fff}",
+    "#secnav .sn-panel button b{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--wash,#ecebe6);color:var(--ink,#0b0b0b);font-size:11px}",
+    "#secnav .sn-panel button.on b{background:rgba(255,255,255,.28);color:#fff}",
     "@keyframes snflash{0%{box-shadow:0 0 0 4px var(--s4,#eda100)}100%{box-shadow:0 0 0 0 transparent}}",
     "#secnav{position:sticky;top:var(--sn-top,0px);z-index:19;background:var(--page,#f9f9f7);border-bottom:1px solid var(--grid,#e1e0d9);box-shadow:0 2px 6px rgba(0,0,0,.05)}",
     "#secnav .sn-row{display:flex;align-items:center;gap:10px;padding:8px 24px}",
@@ -61,11 +70,13 @@
   bar.id = "secnav";
   bar.setAttribute("role", "navigation");
   bar.setAttribute("aria-label", "Sections on this page");
-  bar.innerHTML = '<div class="sn-row"><span class="sn-label">Jump to</span><div class="sn-chips"></div>' +
+  bar.innerHTML = '<div class="sn-row"><span class="sn-label">Jump to</span><button type="button" class="sn-menu" aria-expanded="false" aria-haspopup="true">All sections ▾</button><div class="sn-chips"></div>' +
     '<span class="sn-count" aria-live="polite"></span>' +
-    '<input class="sn-search" type="search" placeholder="Search sections…" aria-label="Search sections"></div>';
+    '<input class="sn-search" type="search" placeholder="Search sections…" aria-label="Search sections"></div><div class="sn-panel" hidden></div>';
   main.parentNode.insertBefore(bar, main);
   var chipsEl = bar.querySelector(".sn-chips");
+  var menuBtn = bar.querySelector(".sn-menu");
+  var panel = bar.querySelector(".sn-panel");
   var search = bar.querySelector(".sn-search");
   var countEl = bar.querySelector(".sn-count");
 
@@ -94,7 +105,8 @@
       /* Same sections, but the page may have redrawn them (the story rebuilds after the Excel file loads):
          point at the new elements, otherwise a click would scroll to a removed node. */
       items.forEach(function (it, i) { it.el = next[i].el; });
-      if (cur) { cur.chip.classList.remove("on"); cur = null; }
+      if (cur) { cur.chip.classList.remove("on"); if (cur.pbtn) cur.pbtn.classList.remove("on"); cur = null; }
+      items.forEach(function (it, i) { it.pbtn = (panel.children[i] || null); if (it.pbtn) it.pbtn.onclick = function () { closePanel(); go(it); }; });
       applySearch(); spy();
       return;
     }
@@ -107,6 +119,14 @@
       b.lastChild.textContent = it.label;
       b.addEventListener("click", function () { go(it); });
       it.chip = b; chipsEl.appendChild(b);
+    });
+    panel.innerHTML = "";
+    items.forEach(function (it, i) {
+      var pb = document.createElement("button");
+      pb.type = "button"; pb.innerHTML = "<b>" + (i + 1) + "</b><span></span>";
+      pb.lastChild.textContent = it.label || it.heading; pb.title = it.heading;
+      pb.addEventListener("click", function () { closePanel(); go(it); });
+      it.pbtn = pb; panel.appendChild(pb);
     });
     bar.style.display = items.length ? "" : "none";
     applySearch(); spy();
@@ -122,12 +142,14 @@
     it.el = document.getElementById(it.id) || it.el;
     var off = offset(), y = it.el.getBoundingClientRect().top + window.pageYOffset - off - 6;
     y = Math.max(0, y);
+    lock = it; lockY = y; lockUntil = Date.now() + 1000;
     var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: y, behavior: calm ? "auto" : "smooth" });
     /* If the smooth scroll did not get there (some browsers and embedded panes drop it), jump. */
     setTimeout(function () {
       var fix = it.el.getBoundingClientRect().top - offset() - 6;
       if (Math.abs(fix) > 6) window.scrollTo(0, Math.max(0, window.pageYOffset + fix));
+      lockY = Math.max(0, window.pageYOffset); lockUntil = Date.now() + 300; spy();
     }, 700);
     it.el.classList.add("sn-flash");
     setTimeout(function () { it.el.classList.remove("sn-flash"); }, 1400);
@@ -135,18 +157,25 @@
   }
 
   var cur = null;
+  var lock = null, lockY = null, lockUntil = 0;
   function spy() {
     if (!items.length) return;
-    var line = offset() + 24, pick = items[0], best = -1e9;
+    var off = offset();
+    /* the section being read is the last one whose top is above ~a third of the visible area under the bars */
+    var line = off + Math.max(24, Math.round((window.innerHeight - off) * 0.33)), pick = items[0], best = -1e9;
     for (var i = 0; i < items.length; i++) {
       var t = items[i].el.getBoundingClientRect().top;
       /* cards sitting side by side share a top: the first of them wins */
       if (t <= line && t > best + 4) { best = t; pick = items[i]; }
     }
+    /* right after a click keep the clicked section highlighted until the reader scrolls away */
+    if (lock) {
+      if (Date.now() < lockUntil || (lockY != null && Math.abs(window.pageYOffset - lockY) < 40)) pick = lock; else lock = null;
+    }
     if (pick === cur) return;
-    if (cur) { cur.chip.classList.remove("on"); cur.el.classList.remove("sn-current"); }
+    if (cur) { cur.chip.classList.remove("on"); cur.el.classList.remove("sn-current"); if (cur.pbtn) cur.pbtn.classList.remove("on"); }
     cur = pick;
-    cur.chip.classList.add("on"); cur.el.classList.add("sn-current");
+    cur.chip.classList.add("on"); cur.el.classList.add("sn-current"); if (cur.pbtn) cur.pbtn.classList.add("on");
     var c = cur.chip, box = chipsEl;
     box.scrollTo({ left: c.offsetLeft - box.clientWidth / 2 + c.offsetWidth / 2, behavior: "smooth" });
   }
@@ -170,6 +199,17 @@
       if (first) go(first);
     } else if (e.key === "Escape") { search.value = ""; applySearch(); search.blur(); }
   });
+
+  function closePanel() { panel.hidden = true; menuBtn.setAttribute("aria-expanded", "false"); }
+  menuBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    var open = panel.hidden;
+    panel.hidden = !open;
+    menuBtn.setAttribute("aria-expanded", String(open));
+    if (open && cur && cur.pbtn) cur.pbtn.scrollIntoView({ block: "nearest" });
+  });
+  document.addEventListener("click", function (e) { if (!panel.hidden && !panel.contains(e.target)) closePanel(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePanel(); });
 
   var ticking = false;
   window.addEventListener("scroll", function () {
