@@ -600,7 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $("cut").onchange = render;
   const BUILT = DATA, builtLabel = "built-in (cleaned data embedded in this file)";
   LOADER = DataLoader($("dl"), {
-    fileHint: "Porter_eNPS_Cleaned.xlsx", livePath: "../data/powerbi/Porter_eNPS_Cleaned.xlsx",
+    fileHint: "Porter_eNPS_Cleaned.xlsx", livePath: "./Porter_eNPS_Cleaned.xlsx",
     sheets: { Employees: ["employee_id", "company", "thread", "function", "grade", "location", "location_type", "job_family", "rating", "compa_band", "manager_id", "manager_moved_june", "invited_apr", "invited_oct", "doj", "exit_date", "exit_type"], Survey: ["employee_id", "wave", "q1", "q2", "q3", "q4", "q5", "q6", "comment_theme"] },
     build: buildSentimentData, apply: setData, builtin: () => BUILT, builtLabel,
     summary: (d) => `${d.employees.length} employees, ${d.responses.length} survey responses`,
