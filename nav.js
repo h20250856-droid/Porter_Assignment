@@ -23,6 +23,8 @@
     ".sn-current.chap .hd{border-left-color:var(--s2,#eb6834)}",
     ".sn-hit>h2,.sn-hit .hd{background:#fff2a8;color:#111;border-radius:6px}",
     ".sn-miss{opacity:.35}",
+    ".sn-flash{animation:snflash 1.3s ease-out}",
+    "@keyframes snflash{0%{box-shadow:0 0 0 4px var(--s4,#eda100)}100%{box-shadow:0 0 0 0 transparent}}",
     "#secnav{position:sticky;top:var(--sn-top,0px);z-index:19;background:var(--page,#f9f9f7);border-bottom:1px solid var(--grid,#e1e0d9);box-shadow:0 2px 6px rgba(0,0,0,.05)}",
     "#secnav .sn-row{display:flex;align-items:center;gap:10px;padding:8px 24px}",
     "#secnav .sn-label{flex:none;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#6f6e68)}",
@@ -110,17 +112,28 @@
   }
 
   function go(it) {
-    offset();
-    it.el.scrollIntoView({ behavior: "smooth", block: "start" });
+    var off = offset(), y = it.el.getBoundingClientRect().top + window.pageYOffset - off - 6;
+    y = Math.max(0, y);
+    var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: y, behavior: calm ? "auto" : "smooth" });
+    /* If the smooth scroll did not get there (some browsers and embedded panes drop it), jump. */
+    setTimeout(function () {
+      var fix = it.el.getBoundingClientRect().top - offset() - 6;
+      if (Math.abs(fix) > 6) window.scrollTo(0, Math.max(0, window.pageYOffset + fix));
+    }, 700);
+    it.el.classList.add("sn-flash");
+    setTimeout(function () { it.el.classList.remove("sn-flash"); }, 1400);
     if (history.replaceState) { try { history.replaceState(null, "", "#" + it.id); } catch (e) { /* framed or blocked */ } }
   }
 
   var cur = null;
   function spy() {
     if (!items.length) return;
-    var line = offset() + 24, pick = items[0];
+    var line = offset() + 24, pick = items[0], best = -1e9;
     for (var i = 0; i < items.length; i++) {
-      if (items[i].el.getBoundingClientRect().top <= line) pick = items[i]; else break;
+      var t = items[i].el.getBoundingClientRect().top;
+      /* cards sitting side by side share a top: the first of them wins */
+      if (t <= line && t > best + 4) { best = t; pick = items[i]; }
     }
     if (pick === cur) return;
     if (cur) { cur.chip.classList.remove("on"); cur.el.classList.remove("sn-current"); }
@@ -153,7 +166,8 @@
   var ticking = false;
   window.addEventListener("scroll", function () {
     if (ticking) return; ticking = true;
-    requestAnimationFrame(function () { ticking = false; spy(); });
+    var done = function () { if (!ticking) return; ticking = false; spy(); };
+    requestAnimationFrame(done); setTimeout(done, 120);
   }, { passive: true });
   window.addEventListener("resize", function () { stackUnderFilters(); spy(); });
 
