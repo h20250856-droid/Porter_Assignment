@@ -90,8 +90,15 @@
   function build() {
     var next = collect();
     var s = next.map(function (x) { return x.id + "|" + x.heading; }).join("~");
-    if (s === sig) return;
-    sig = s; items = next;
+    if (s === sig) {
+      /* Same sections, but the page may have redrawn them (the story rebuilds after the Excel file loads):
+         point at the new elements, otherwise a click would scroll to a removed node. */
+      items.forEach(function (it, i) { it.el = next[i].el; });
+      if (cur) { cur.chip.classList.remove("on"); cur = null; }
+      applySearch(); spy();
+      return;
+    }
+    sig = s; items = next; cur = null;
     chipsEl.innerHTML = "";
     items.forEach(function (it, i) {
       var b = document.createElement("button");
@@ -112,6 +119,7 @@
   }
 
   function go(it) {
+    it.el = document.getElementById(it.id) || it.el;
     var off = offset(), y = it.el.getBoundingClientRect().top + window.pageYOffset - off - 6;
     y = Math.max(0, y);
     var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
