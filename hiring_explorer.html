@@ -69,23 +69,22 @@ footer{padding:0 24px 28px;color:var(--muted);font-size:12px}
 </style></head>
 <body><header class="top"><h1>Hiring performance (explorer)</h1><span class="sub">Requisitions raised 1 Apr to 15 Oct 2026, ATS export. Data as of 31 Oct 2026. Synthetic data.</span><nav><a class="" href="index.html#sentiment-story">Sentiment story</a><a class="" href="index.html#hiring-story">Hiring story</a><a class="" href="index.html#sentiment-dashboard">Sentiment dashboard</a><a class="on" href="index.html#hiring-dashboard">Hiring dashboard</a></nav></header>
 <div class="dl" id="dl"></div>
-<div class="filters" id="filters"></div><main>
+<style>.note{margin:8px 0;padding:7px 10px;border-radius:6px;background:var(--warnbg,#fff4d6);color:var(--warnink,#5c4300);font-size:12.5px;line-height:1.4}.sowhat{margin:12px 0 0;padding:8px 12px;border-left:3px solid var(--accent);background:var(--wash,#ecebe6);border-radius:0 6px 6px 0;font-size:13px;line-height:1.45}</style><div class="filters" id="filters"></div><main>
 <div class="read" id="read"></div>
 <div id="warn" style="display:contents"></div>
 <section class="kpis" id="kpis"></section>
 <section class="explain" id="explain" style="display:none"></section>
-<section class="card span12"><h2>Where are we losing time?</h2><p class="q">Average days per stage on the hired candidate's path, split by whether the role met SLA. The parts add up to mean Time to Fill.</p><div id="stages"></div></section>
-<section class="card span4"><h2>Requisitions by month raised</h2><p class="q">Current outcome of each month's roles.</p><div id="t-raised"></div></section>
-<section class="card span4"><h2>SLA attainment by month raised</h2><p class="q">% of filled roles within SLA (shown with 3+ filled).</p><div id="t-sla"></div></section>
-<section class="card span4"><h2>Median Time to Fill by month raised</h2><p class="q">Days (shown with 3+ filled).</p><div id="t-ttf"></div></section>
-<p class="foot" style="grid-column:span 12;margin:-6px 2px 0;color:var(--muted);font-size:12px">* Sep and Oct are incomplete: slow roles are still open, so these months look faster than they will end up.</p>
-<section class="card span12"><h2>Which roles are behind? Drill down</h2><p class="q" id="bdhint"></p><div class="ctl"><label>Break down by <select id="dim"></select></label></div><div id="bd"></div></section>
-<section class="card span6"><h2>Where do candidates drop out?</h2><p class="q">Applications reaching each stage.</p><div id="funnel"></div></section>
-<section class="card span6"><h2>Which offers get declined?</h2><p class="q">Low: offer under 90% of expected pay. Slow: over 21 days from application to offer.</p><div id="offers"></div><p class="foot">Thresholds chosen after inspecting the data. No decline reasons are recorded.</p></section>
-<section class="card span12"><h2>Which channels deliver joiners?</h2><p class="q">Click a source to filter the page. All six stay listed for comparison.</p><div id="sources"></div></section>
-<section class="card span12"><h2>How is the recruiting team placed?</h2><p class="q">Compare SLA with what each recruiter's grade mix predicts. Click a recruiter to filter the page.</p><div id="recs"></div><p class="foot">Attainment covers Apr-Oct (7 months). A max possible under 100% means the recruiter does not own enough roles to reach the target.</p></section>
-<section class="card span7"><h2>Oldest open roles</h2><p class="q">Age as of 31 Oct 2026.</p><div id="openlist"></div><p class="foot" id="openfoot"></p></section>
-<section class="card span5"><h2>Slowest interview feedback</h2><p class="q">R1 feedback lag, interviewers with 5+ interviews.</p><div id="ivs"></div></section>
+<section class="card span12"><h2>Where are we losing time?</h2><p class="q">Average days per stage on the hired candidate's path, split by whether the role met SLA. The parts add up to mean Time to Fill.</p><div id="stages"></div><p class="sowhat" id="sw-stages" style="display:none"></p></section>
+<section class="card span4"><h2>Requisitions by month raised</h2><p class="q">Current outcome of each month's roles.</p><div id="t-raised"></div><p class="note">Caution: Sep and Oct are incomplete. Slow roles are still open, so these months look faster than they will end up.</p><p class="sowhat" id="sw-raised" style="display:none"></p></section>
+<section class="card span4"><h2>SLA attainment by month raised</h2><p class="q">% of filled roles within SLA (shown with 3+ filled).</p><div id="t-sla"></div><p class="note">Caution: Sep and Oct are incomplete. Slow roles are still open, so these months look faster than they will end up.</p><p class="sowhat" id="sw-sla" style="display:none"></p></section>
+<section class="card span4"><h2>Median Time to Fill by month raised</h2><p class="q">Days (shown with 3+ filled).</p><div id="t-ttf"></div><p class="note">Caution: Sep and Oct are incomplete. Slow roles are still open, so these months look faster than they will end up.</p><p class="sowhat" id="sw-ttf" style="display:none"></p></section>
+<section class="card span12"><h2>Which roles are behind? Drill down</h2><p class="q" id="bdhint"></p><div class="ctl"><label>Break down by <select id="dim"></select></label></div><div id="bd"></div><p class="sowhat" id="sw-bd" style="display:none"></p></section>
+<section class="card span6"><h2>Where do candidates drop out?</h2><p class="q">Applications reaching each stage.</p><div id="funnel"></div><p class="sowhat" id="sw-funnel" style="display:none"></p></section>
+<section class="card span6"><h2>Which offers get declined?</h2><p class="q">Low: offer under 90% of expected pay. Slow: over 21 days from application to offer.</p><p class="note">Caution: the 90% pay and 21-day thresholds were chosen after inspecting the data, so read these splits as exploratory. No decline reasons are recorded.</p><div id="offers"></div><p class="sowhat" id="sw-offers" style="display:none"></p></section>
+<section class="card span12"><h2>Which channels deliver joiners?</h2><p class="q">Click a source to filter the page. All six stay listed for comparison.</p><div id="sources"></div><p class="sowhat" id="sw-src" style="display:none"></p></section>
+<section class="card span12"><h2>How is the recruiting team placed?</h2><p class="q">Compare SLA with what each recruiter's grade mix predicts. Click a recruiter to filter the page.</p><div id="recs"></div><p class="sowhat" id="sw-recs" style="display:none"></p><p class="foot">Attainment covers Apr-Oct (7 months). A max possible under 100% means the recruiter does not own enough roles to reach the target.</p></section>
+<section class="card span7"><h2>Oldest open roles</h2><p class="q">Age as of 31 Oct 2026.</p><div id="openlist"></div><p class="foot" id="openfoot"></p><p class="sowhat" id="sw-open" style="display:none"></p></section>
+<section class="card span5"><h2>Slowest interview feedback</h2><p class="q">R1 feedback lag, interviewers with 5+ interviews.</p><div id="ivs"></div><p class="sowhat" id="sw-ivs" style="display:none"></p></section>
 </main>
 <footer>Click any KPI to see how it is calculated. Metric definitions and cleaning rules: analysis_workbook.xlsx. Sample sizes are shown beside each score. Built 05 Nov 2026 00:15.</footer>
 <script>/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
@@ -555,6 +554,32 @@ function render() {
   const iv = {}; c.a.forEach((x) => { if (x.iv && x.lag != null) (iv[x.iv] = iv[x.iv] || []).push(x.lag); });
   const ivRows = Object.entries(iv).filter(([, v]) => v.length >= 5).map(([k, v]) => ({ k, n: v.length, m: mean(v), o: v.filter((x) => x > 7).length })).sort((a, b) => b.m - a.m).slice(0, 8);
   drawTable($("ivs"), [{ h: "Interviewer ID", v: (r) => r.k }, { h: "R1 interviews", v: (r) => r.n }, { h: "Mean feedback days", v: (r) => r.m, t: (r) => f1(r.m), cls: (r) => (r.m > 5 ? "negv" : "") }, { h: "Over 7 days", v: (r) => r.o }], ivRows, { sort: 2 });
+
+  // "So what" lines: one computed takeaway under each main chart
+  const sw = (id, t) => { const e = $(id); if (!e) return; e.innerHTML = t ? `<b>So what:</b> ${esc(t)}` : ""; e.style.display = t ? "" : "none"; };
+  const gapStage = ["t1", "t2", "t3", "t4"].map((k, i) => ({ n: S[i].name, d: mean(missed.filter((x) => x[k] != null).map((x) => x[k])) - mean(metR.filter((x) => x[k] != null).map((x) => x[k])) })).sort((a, b) => b.d - a.d)[0];
+  sw("sw-stages", missed.length >= 3 && metR.length >= 3 && isFinite(gapStage.d) ? `roles that missed SLA lose the most time at "${gapStage.n}": ${f1(gapStage.d)} days longer than roles that met it.` : "");
+  const span = `${MN[months[0]]} to ${MN[months[lastComplete]]}`;
+  const completeOnly = (arr) => arr.slice(0, lastComplete + 1).filter((x) => x.v != null);
+  const lohi = (a) => [a.reduce((p, x) => (x.v < p.v ? x : p)), a.reduce((p, x) => (x.v > p.v ? x : p))];
+  const slaC = completeOnly(slaM), ttfC = completeOnly(ttfM);
+  if (slaC.length >= 2) { const [lo, hi] = lohi(slaC); sw("sw-sla", `across the complete months (${span}) SLA attainment ranged from ${pct(lo.v)} in ${lo.label} to ${pct(hi.v)} in ${hi.label}.`); } else sw("sw-sla", "");
+  if (ttfC.length >= 2) { const [lo, hi] = lohi(ttfC); sw("sw-ttf", `across the complete months (${span}) median Time to Fill ranged from ${f1(lo.v)} days in ${lo.label} to ${f1(hi.v)} days in ${hi.label}.`); } else sw("sw-ttf", "");
+  const openPeak = raised.reduce((p, x) => (x.parts[1] > p.parts[1] ? x : p), raised[0]);
+  sw("sw-raised", c.open.length && openPeak.parts[1] ? `${c.open.length} roles are still open; ${openPeak.label} has the most (${openPeak.parts[1]}).` : "");
+  const rowsOk = rows.filter(Boolean), rb = rowsOk.filter((r) => r.f >= 5 && r.sla != null).sort((a, b) => a.sla - b.sla)[0], rbr = [...rowsOk].sort((a, b) => b.br - a.br)[0];
+  sw("sw-bd", rb ? `lowest SLA by ${dd.label.toLowerCase()} is ${rb.g} at ${pct(rb.sla)} (${rb.f} filled)${rbr && rbr.br > 0 ? `; most open roles past SLA: ${rbr.g} (${rbr.br})` : ""}.` : "");
+  const drop = fr.filter((x) => x.step != null).sort((a, b) => a.step - b.step)[0];
+  sw("sw-funnel", drop ? `the sharpest drop is into "${drop.s}": only ${pct(drop.step)} of the previous stage gets there.` : "");
+  const oc = cells.filter((x) => x.n >= 5).sort((a, b) => b.p - a.p)[0];
+  sw("sw-offers", oc ? `highest decline rate is "${oc.t}" at ${pct(oc.p)} (${oc.d} of ${oc.n} offers).` : "");
+  const sj = srcNames.map((s) => ({ s, j: allA.filter((x) => x.s === s && x.j).length })), tj = sj.reduce((p, x) => p + x.j, 0), topS = [...sj].sort((a, b) => b.j - a.j)[0];
+  sw("sw-src", tj ? `${topS.s} delivers the most joiners (${topS.j} of ${tj}, ${pct((topS.j / tj) * 100)}).` : "");
+  const rr = recRows.filter((x) => x.f >= 5 && x.gap != null).sort((a, b) => a.gap - b.gap)[0];
+  sw("sw-recs", rr && rr.gap < 0 ? `${rr.n} is furthest below the SLA their grade mix predicts: ${pct(rr.sla)} actual vs ${pct(rr.exp)} expected (${rr.f} filled).` : "");
+  sw("sw-open", openList.length ? `${c.opB.length} of ${c.open.length} open roles are already past SLA; the oldest, ${openList[0].id}, has been open ${openList[0].age} days.` : "");
+  const slowIv = ivRows.filter((x) => x.m > 5);
+  sw("sw-ivs", ivRows.length ? (slowIv.length ? `${slowIv.length} of the ${ivRows.length} slowest interviewers average over 5 days for R1 feedback; ${ivRows[0].k} is slowest at ${f1(ivRows[0].m)} days.` : `even the slowest interviewer (${ivRows[0].k}) averages ${f1(ivRows[0].m)} days.`) : "");
 }
 
 

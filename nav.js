@@ -37,6 +37,15 @@
     "#secnav .sn-search{flex:none;width:190px;padding:6px 10px;border:1px solid var(--axis,#c3c2b7);border-radius:8px;background:var(--surface,#fcfcfb);color:var(--ink,#0b0b0b);font:inherit;font-size:13px}",
     "#secnav .sn-count{flex:none;font-size:12px;color:var(--muted,#6f6e68);min-width:54px}",
     "@media (max-width:860px){#secnav .sn-row{flex-wrap:wrap;padding:8px 14px}#secnav .sn-chips{flex-basis:100%;order:3}#secnav .sn-search{flex:1;width:auto}}",
+    ".sn-ftoggle,.sn-dltoggle{display:none}",
+    "@media (max-width:860px){",
+    "  .sn-ftoggle,.sn-dltoggle{display:flex;align-items:center;justify-content:space-between;width:calc(100% - 32px);margin:8px 16px 0;padding:9px 12px;border:1px solid var(--axis,#c3c2b7);border-radius:8px;background:var(--surface,#fcfcfb);color:var(--ink,#0b0b0b);font:inherit;font-size:14px;font-weight:600;cursor:pointer}",
+    "  .sn-ftoggle b{color:var(--accent,#1c5cab)}",
+    "  .filters:not(.fopen) .filter-row{display:none}",
+    "  .dl.sn-dlc:not(.dlopen){display:none}",
+    "  .dl.sn-dlc{margin-top:6px}",
+    "  .top .sub{font-size:12px}",
+    "}",
     "@media print{#secnav{display:none}}"
   ].join("\n");
   var st = document.createElement("style");
@@ -163,6 +172,36 @@
   /* Story chapters are drawn by script and redrawn when filters change. */
   var t = null;
   new MutationObserver(function () { clearTimeout(t); t = setTimeout(build, 60); }).observe(main, { childList: true });
+
+  /* Phones: collapse the filter buttons and the data-source bar behind one-tap toggles. */
+  var filters = document.querySelector(".filters");
+  if (filters && !filters.closest("details")) {
+    var ft = document.createElement("button");
+    ft.type = "button"; ft.className = "sn-ftoggle";
+    filters.parentNode.insertBefore(ft, filters);
+    var paintF = function () {
+      var n = filters.querySelectorAll(".chip").length, open = filters.classList.contains("fopen");
+      ft.innerHTML = "<span>Filters" + (n ? " <b>(" + n + " active)</b>" : "") + "</span><span>" + (open ? "Hide ▴" : "Show ▾") + "</span>";
+      ft.setAttribute("aria-expanded", String(open));
+    };
+    ft.addEventListener("click", function () { filters.classList.toggle("fopen"); paintF(); });
+    new MutationObserver(paintF).observe(filters, { childList: true, subtree: true });
+    paintF();
+  }
+  var dl = document.getElementById("dl");
+  if (dl) {
+    dl.classList.add("sn-dlc");
+    var dt = document.createElement("button");
+    dt.type = "button"; dt.className = "sn-dltoggle";
+    dl.parentNode.insertBefore(dt, dl);
+    var paintD = function () {
+      var open = dl.classList.contains("dlopen");
+      dt.innerHTML = "<span>Data source</span><span>" + (open ? "Hide ▴" : "Show ▾") + "</span>";
+      dt.setAttribute("aria-expanded", String(open));
+    };
+    dt.addEventListener("click", function () { dl.classList.toggle("dlopen"); paintD(); });
+    paintD();
+  }
 
   stackUnderFilters();
   build();
