@@ -63,7 +63,7 @@ iframe{flex:1;width:100%;border:0;background:var(--page)}
     });
     document.title = titles[key] + " · Porter People Analytics";
     document.getElementById("open").href = PAGES[key];
-    if (key !== current) { current = key; frame.src = PAGES[key]; }
+    if (key !== current) { current = key; frame.src = PAGES[key] + "?v=5"; }
   }
   function pick(group, value) {
     var key = parse().split("-");
