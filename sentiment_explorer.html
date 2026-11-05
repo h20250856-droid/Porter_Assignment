@@ -67,7 +67,7 @@ footer{padding:0 24px 28px;color:var(--muted);font-size:12px}
 @media print{.filters{position:static}.fbtn,.reset{display:none}}
 .dl-live{display:inline-flex;gap:8px 10px;align-items:center;flex-wrap:wrap}.dl-path{width:340px;max-width:86vw;font:inherit;font-size:12.5px;border:1px solid var(--ring);border-radius:7px;padding:4px 8px;background:var(--surface);color:var(--ink)}.dl-auto{display:inline-flex;gap:5px;align-items:center;cursor:pointer}.dl-msg.live::before{content:'\25CF ';color:var(--s3)}.dl-help code{background:var(--wash);padding:1px 5px;border-radius:4px}
 </style></head>
-<body><header class="top"><h1>Employee sentiment (explorer)</h1><span class="sub">Pulse survey April vs October 2026, joined to HRMS. Data as of 31 Oct 2026. Synthetic data.</span><nav><a class="" href="sentiment.html">Sentiment story</a><a class="" href="hiring.html">Hiring story</a><a class="on" href="sentiment_explorer.html">Explore sentiment</a><a class="" href="index.html">Explore hiring</a></nav></header>
+<body><header class="top"><h1>Employee sentiment (explorer)</h1><span class="sub">Pulse survey April vs October 2026, joined to HRMS. Data as of 31 Oct 2026. Synthetic data.</span><nav><a class="" href="index.html#sentiment-story">Sentiment story</a><a class="" href="index.html#hiring-story">Hiring story</a><a class="on" href="index.html#sentiment-dashboard">Sentiment dashboard</a><a class="" href="index.html#hiring-dashboard">Hiring dashboard</a></nav></header>
 <div class="dl" id="dl"></div>
 <div class="filters" id="filters"></div><main>
 <div class="read" id="read"></div>
@@ -609,4 +609,4 @@ document.addEventListener("DOMContentLoaded", () => {
   LOADER.startLive();
   window.DASH = { setFilters: (o) => FB.setAll(o), loadBuffer: LOADER.loadBuffer, metrics: () => { const c = calc(); return { invited: [c.inv[0].length, c.inv[1].length], responses: [c.resp[0].length, c.resp[1].length], enps: c.q1.map((a) => (a.length ? Math.round(enps(a) * 10) / 10 : null)), q1n: c.q1.map((a) => a.length), paired: c.pa.length }; } };
 });
-</script></body></html>
+</script><script src="nav.js"></script></body></html>
