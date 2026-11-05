@@ -104,7 +104,7 @@ details.how{margin-top:10px;font-size:13.5px;color:var(--ink2);max-width:900px}d
 .acts li::before{content:counter(a);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;margin-bottom:8px}
 .acts li b{display:block;margin-bottom:4px;font-size:16px}.acts li small{display:block;color:var(--muted);margin-top:6px;font-size:12.5px}
 .legend{margin-top:12px}
-svg .clk,.clk{cursor:pointer}svg text.clk:hover{text-decoration:underline}
+svg .clk,.clk{cursor:default}
 .viz select{margin-left:6px}
 @media (max-width:860px){.trio,.duo{grid-template-columns:1fr}h2.hd{font-size:24px}header.top.hero h1{font-size:27px}main.s,.chapnav,.scope,header.top.hero{padding-left:16px;padding-right:16px}.chap{padding-top:34px}}
 @media print{.chapnav,.dl,details.focus{display:none}.chap{break-inside:avoid}}
@@ -113,7 +113,7 @@ svg .clk,.clk{cursor:pointer}svg text.clk:hover{text-decoration:underline}
 </style></head>
 <body class="story"><header class="top hero"><div class="brand">People analytics · data story</div><h1>Did sentiment change between April and October, who is behind it, and does it matter?</h1><span class="sub">A pulse survey of Porter employees, joined to HR records. Every sentence on this page is calculated from the data, so it updates when you filter or load a new file. Synthetic data, as of 31 Oct 2026.</span><nav><a class="on" href="index.html#sentiment-story">Sentiment story</a><a class="" href="index.html#hiring-story">Hiring story</a><a class="" href="index.html#sentiment-dashboard">Sentiment dashboard</a><a class="" href="index.html#hiring-dashboard">Hiring dashboard</a></nav></header>
 <div class="dl" id="dl" hidden style="display:none"></div>
-<div class="scope" hidden style="display:none"><span class="scope-line" id="scope-line"></span><details class="focus"><summary>Focus the story on a group (filters)</summary><div class="focusbox"><div id="filters"></div></div></details></div>
+<div hidden style="display:none"><span id="scope-line"></span><div id="filters"></div></div>
 <nav class="chapnav" id="chapnav" aria-label="Chapters"></nav>
 <main class="s" id="story"></main>
 <footer style="max-width:1100px;margin:0 auto">Hover any bar or square for exact values. Open "How we know" under each chapter for the definition and sample size. Want the full filter tables? Switch between the Story and Dashboard views at the top of the page. Built 05 Nov 2026 00:15.</footer>
@@ -533,7 +533,7 @@ function chapterNav(host) {
   SPY = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) host.querySelectorAll("a").forEach((a) => a.classList.toggle("on", a.dataset.id === e.target.id)); }), { rootMargin: "-30% 0px -60% 0px" });
   secs.forEach((s) => SPY.observe(s));
 }
-document.addEventListener("click", (e) => { const t = e.target.closest && e.target.closest("[data-focus]"); if (t && window.STORY_FOCUS) window.STORY_FOCUS(t.dataset.focus, t.dataset.dim); });
+/* Chart rows are no longer clickable: the story always shows everyone. */
 const activeFilters = (defs, FBref) => defs.filter((d) => FBref.state[d.key].size).map((d) => `${d.label}: ${[...FBref.state[d.key]].join(", ")}`);
 </script><script>/* Employee sentiment dashboard. calc() is the single metric layer: every card reads from it. */
 let D = DATA, E = D.employees, RS = D.responses;
