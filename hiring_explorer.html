@@ -70,7 +70,7 @@ footer{padding:0 24px 28px;color:var(--muted);font-size:12px}
 <body><header class="top"><span class="brandtag">PORTER<i>ATS Analytics</i></span><h1>Hiring Performance Dashboard</h1><span class="sub">Requisitions raised 1 Apr to 15 Oct 2026, ATS export. Data as of 31 Oct 2026. Synthetic data.</span><nav><a class="" href="index.html#sentiment-story">Sentiment story</a><a class="" href="index.html#hiring-story">Hiring story</a><a class="" href="index.html#sentiment-dashboard">Sentiment dashboard</a><a class="on" href="index.html#hiring-dashboard">Hiring dashboard</a></nav></header>
 <div class="dl" id="dl"></div>
 <style>.note{margin:8px 0;padding:7px 10px;border-radius:6px;background:var(--warnbg,#fff4d6);color:var(--warnink,#5c4300);font-size:12.5px;line-height:1.4}.sowhat{margin:12px 0 0;padding:8px 12px;border-left:3px solid var(--accent);background:var(--wash,#ecebe6);border-radius:0 6px 6px 0;font-size:13px;line-height:1.45}.brandtag{font-weight:800;letter-spacing:.14em;font-size:15px;color:#fff;padding-right:16px;border-right:1px solid rgba(255,255,255,.35)}.brandtag i{display:block;font-style:normal;font-weight:500;letter-spacing:.02em;font-size:11px;color:#cfe0f1}
-header.top{background:#173B63;color:#fff;align-items:center;padding:14px 24px;border-radius:0 0 14px 14px}header.top h1{color:#fff;font-size:22px}header.top .sub{color:#cfe0f1}header.top nav a{color:#cfe0f1}header.top nav a.on{background:rgba(255,255,255,.18);color:#fff}header.top nav a:hover{background:rgba(255,255,255,.1)}
+header.top{background:#173B63;color:#fff;align-items:center;padding:9px 24px;border-radius:0 0 12px 12px}header.top h1{color:#fff;font-size:22px}header.top .sub{color:#cfe0f1}header.top nav a{color:#cfe0f1}header.top nav a.on{background:rgba(255,255,255,.18);color:#fff}header.top nav a:hover{background:rgba(255,255,255,.1)}
 .kpi .l{display:flex;align-items:center;gap:6px}.kpi .l svg{width:17px;height:17px;flex:none;color:var(--accent)}.kpi .d.bad{color:var(--crit);font-weight:600}.kpi .d.good{color:var(--good);font-weight:600}
 .pill{display:inline-block;padding:1px 9px;border-radius:999px;font-weight:600;font-size:12px}.pill.bad{background:#fbe1e1;color:#a12323}.pill.ok{background:#dcf3e6;color:#0b6b3a}
 @media (prefers-color-scheme:dark){.pill.bad{background:#4a1f1f;color:#ffb4b4}.pill.ok{background:#173a28;color:#9be3bb}}
@@ -80,6 +80,10 @@ header.top{background:#173B63;color:#fff;align-items:center;padding:14px 24px;bo
 details.tbl{margin-top:10px}details.tbl summary{cursor:pointer;color:var(--accent);font-size:13px;width:max-content}
 .insights ol{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}.insights li{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--grid);border-radius:10px}.insights .n{flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:13px}.insights .act{color:var(--ink2);font-size:13px;margin-top:3px}
 @media (max-width:860px){.fr{grid-template-columns:70px 1fr 48px}.rbr{grid-template-columns:84px 1fr 84px}.insights ol{grid-template-columns:1fr}header.top{padding:12px 16px}.brandtag{border-right:0;padding-right:0}}
+</style><style>.dl{flex-wrap:nowrap;gap:8px;padding:6px 24px;font-size:12px;overflow:hidden}.dl .dl-live{display:inline-flex;gap:8px;align-items:center;flex-wrap:nowrap}.dl .dl-live>label:first-child{display:none}.dl .dl-help{display:none}.dl .dl-src{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34ch}.dl .fbtn{padding:2px 9px;font-size:12px;white-space:nowrap}.dl .dl-auto{white-space:nowrap}.dl .dl-msg{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+.filters{padding:6px 24px 6px}.filters .filter-row{gap:5px}.filters .fbtn{padding:3px 9px;font-size:12.5px}.filters .status{margin-top:4px;min-height:0}
+.read.rd-collapsed ul li:nth-child(n+2){display:none}.rd-more{margin-top:4px;background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:12.5px;cursor:pointer}
+@media (max-width:860px){.dl{flex-wrap:wrap}.dl .dl-msg{white-space:normal}.dl .dl-src{max-width:none}}
 </style><div class="filters" id="filters"></div><main>
 <div class="read" id="read"></div>
 <div id="warn" style="display:contents"></div>
@@ -153,9 +157,9 @@ function DataLoader(host, cfg) {
   const kP = "porter-live-path:" + cfg.fileHint, kA = "porter-live-auto:" + cfg.fileHint;
   let path = store.get(kP) || cfg.livePath, auto = store.get(kA) !== "0", mode = "built-in", sig = null, timer = null, lastData = null, busy = false;
   host.innerHTML = `<span class="dl-src" id="dl-src"></span>
-    <span class="dl-live"><label>Excel path <input id="dl-path" class="dl-path" value="${esc(path)}" spellcheck="false" title="Relative to this HTML file"></label><button class="fbtn" id="dl-reload" title="Read the Excel file again now">Reload now</button>
-    <label class="dl-auto"><input type="checkbox" id="dl-auto" ${auto ? "checked" : ""}> Auto-refresh when the file changes</label></span>
-    <label class="fbtn dl-btn" title="Pick ${esc(cfg.fileHint)} from anywhere (one-off, does not follow changes)">Pick a file once…<input type="file" id="dl-file" accept=".xlsx,.xlsm,.xls" hidden></label><button class="fbtn" id="dl-reset" title="Go back to the data built into this page">Use built-in data</button>
+    <span class="dl-live"><label>Excel path <input id="dl-path" class="dl-path" value="${esc(path)}" spellcheck="false" title="Relative to this HTML file"></label><button class="fbtn" id="dl-reload" title="Read the Excel file again now">↻ Reload</button>
+    <label class="dl-auto"><input type="checkbox" id="dl-auto" ${auto ? "checked" : ""}> Auto-refresh</label></span>
+    <label class="fbtn dl-btn" title="Pick ${esc(cfg.fileHint)} from anywhere (one-off, does not follow changes)">Upload Excel…<input type="file" id="dl-file" accept=".xlsx,.xlsm,.xls" hidden></label><button class="fbtn" id="dl-reset" title="Go back to the data built into this page">Built-in data</button>
     <span class="dl-msg" id="dl-msg" role="status"></span>
     <details class="dl-help"><summary>How the Excel connection works</summary><p>This page reads <b>${esc(cfg.fileHint)}</b> from the path shown (relative to this HTML file) every time it opens, and again whenever the file changes. Edit the workbook in Excel and <b>save it (Ctrl+S)</b>; within a few seconds the story rebuilds and your filters stay in place. Nothing leaves your computer.</p><p><b>Where it works:</b> on the hosted website (GitHub Pages), where changes appear after the site republishes (about a minute after you update the Excel file in the repository), or locally through <code>start_dashboards.bat</code>, where they appear within seconds of saving. If you open this page by double-clicking the HTML file, browsers block reading other files, so it shows the built-in data and the Excel connection is off.</p><p>Required sheets and columns (keep the names; add or edit rows freely; update derived columns such as sla_status or compa_band yourself if you change their inputs):</p><ul>${Object.entries(cfg.sheets).map(([s, c]) => `<li><b>${esc(s)}</b>: ${esc(c.join(", "))}</li>`).join("")}</ul></details>`;
   const msg = (t, bad, live) => { const m = $("dl-msg"); m.textContent = t; m.className = "dl-msg" + (bad ? " bad" : "") + (live ? " live" : ""); };
@@ -179,7 +183,7 @@ function DataLoader(host, cfg) {
       const { data, warnings } = cfg.build(sheets);
       cfg.apply(data, opts.label || name);
       lastData = data;
-      if (opts.live) msg(`Live from ${path}: ${cfg.summary(data)}. Last read ${new Date().toLocaleTimeString()}${warnings.length ? ". Notes: " + warnings.join("; ") : ""}`, false, true);
+      if (opts.live) msg(`${cfg.summary(data)} · updated ${new Date().toLocaleTimeString()}${warnings.length ? ". Notes: " + warnings.join("; ") : ""}`, false, true);
       else msg(`Loaded ${name}: ${cfg.summary(data)}${warnings.length ? ". Notes: " + warnings.join("; ") : ""}`);
       return true;
     } catch (e) { msg("Could not load " + name + ": " + e.message + ". The dashboard still shows the previous data.", true); return false; }
@@ -233,7 +237,7 @@ function FilterBar(host, defs, onChange) {
     });
     const crumbs = [];
     defs.forEach((d) => state[d.key].forEach((v) => crumbs.push(`<button class="chip" data-k="${esc(d.key)}" data-v="${esc(v)}" title="Remove filter">${esc(d.label)}: ${esc(v)} ✕</button>`)));
-    statusEl.querySelector(".crumb").innerHTML = crumbs.length ? crumbs.join("") : '<span>No filters: showing everyone</span>';
+    statusEl.querySelector(".crumb").innerHTML = crumbs.join("");
   }
   defs.forEach((d) => {
     const w = document.createElement("div"); w.className = "fwrap"; w.dataset.key = d.key;
@@ -599,7 +603,7 @@ function render() {
   // Visual funnel (largest stage-to-stage drop is shown in red)
   const shade = (i, n) => { const a = [23, 59, 99], b = [156, 199, 232], t = n > 1 ? i / (n - 1) : 0; return `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * t)).join(",")})`; };
   const worstF = fr.reduce((p, x) => (x.step != null && (p == null || x.step < p.step) ? x : p), null);
-  $("funnel").innerHTML = fr[0] && fr[0].n ? `<div class="fun">${fr.map((x, i) => `<div class="fr${x === worstF ? " worst" : ""}"><span class="fl">${esc(x.s)}</span><div class="fw"><div class="fb" style="width:${Math.max(24, x.all)}%;background:${shade(i, fr.length)};${i >= fr.length * 0.55 ? "color:#0b2540" : ""}">${num(x.n)} <small>(${pct(x.all)})</small></div></div><span class="fs">${x.step == null ? "" : "↓ " + pct(x.step)}</span></div>`).join("")}</div><p class="foot">Applications reaching each stage. The % on the right is the share that moves on from the previous stage; the largest drop is shown in red.</p>` : '<div class="empty">No records match these filters. Remove a filter to see data.</div>';
+  $("funnel").innerHTML = fr[0] && fr[0].n ? `<div class="fun">${fr.map((x, i) => `<div class="fr${x === worstF ? " worst" : ""}"><span class="fl">${esc(x.s)}</span><div class="fw"><div class="fb" style="width:${Math.max(24, x.all)}%;background:${shade(i, fr.length)};${i >= fr.length * 0.55 ? "color:#0b2540" : ""}">${num(x.n)} <small>(${pct(x.all)})</small></div></div><span class="fs">${x.step == null ? "" : "↓ " + pct(x.step)}</span></div>`).join("")}</div><p class="foot">↓ % = share that moves on from the previous stage. Largest drop in red.</p>` : '<div class="empty">No records match these filters. Remove a filter to see data.</div>';
 
   // Offer outcomes donut
   const oCount = {}; c.off.forEach((x) => (oCount[x.os] = (oCount[x.os] || 0) + 1));

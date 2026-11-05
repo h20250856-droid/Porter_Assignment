@@ -112,7 +112,7 @@ svg .clk,.clk{cursor:pointer}svg text.clk:hover{text-decoration:underline}
 @media (max-width:860px){.viz{overflow-x:auto;-webkit-overflow-scrolling:touch}.viz svg{min-width:620px}.waffles svg{min-width:0}.viz::after{content:'Swipe sideways to see the whole chart';display:block;font-size:11.5px;color:var(--muted);margin-top:6px}.waffles+.legend{margin-top:8px}}
 </style></head>
 <body class="story"><header class="top hero"><div class="brand">People analytics · data story</div><h1>Did sentiment change between April and October, who is behind it, and does it matter?</h1><span class="sub">A pulse survey of Porter employees, joined to HR records. Every sentence on this page is calculated from the data, so it updates when you filter or load a new file. Synthetic data, as of 31 Oct 2026.</span><nav><a class="on" href="index.html#sentiment-story">Sentiment story</a><a class="" href="index.html#hiring-story">Hiring story</a><a class="" href="index.html#sentiment-dashboard">Sentiment dashboard</a><a class="" href="index.html#hiring-dashboard">Hiring dashboard</a></nav></header>
-<div class="dl" id="dl"></div>
+<div class="dl" id="dl" hidden style="display:none"></div>
 <div class="scope"><span class="scope-line" id="scope-line"></span><details class="focus"><summary>Focus the story on a group (filters)</summary><div class="focusbox"><div id="filters"></div></div></details></div>
 <nav class="chapnav" id="chapnav" aria-label="Chapters"></nav>
 <main class="s" id="story"></main>
@@ -229,8 +229,6 @@ function DataLoader(host, cfg) {
   $("dl-reload").onclick = () => loadLive();
   $("dl-auto").onchange = (e) => { auto = e.target.checked; store.set(kA, auto ? "1" : "0"); startPoll(); };
   $("dl-path").onchange = (e) => { path = e.target.value.trim() || cfg.livePath; e.target.value = path; store.set(kP, path); loadLive(); };
-  document.addEventListener("dragover", (e) => { if ([...(e.dataTransfer?.types || [])].includes("Files")) e.preventDefault(); });
-  document.addEventListener("drop", async (e) => { const f = e.dataTransfer?.files?.[0]; if (f) { e.preventDefault(); clearInterval(timer); mode = "file"; await loadBuffer(await f.arrayBuffer(), f.name); } });
   return { loadBuffer, loadLive, startLive: loadLive, setLabel: (t) => ($("dl-src").textContent = "Data: " + t) };
 }
 

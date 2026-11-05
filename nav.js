@@ -189,7 +189,7 @@
     paintF();
   }
   var dl = document.getElementById("dl");
-  if (dl) {
+  if (dl && !document.body.classList.contains("story")) {
     dl.classList.add("sn-dlc");
     var dt = document.createElement("button");
     dt.type = "button"; dt.className = "sn-dltoggle";
@@ -201,6 +201,28 @@
     };
     dt.addEventListener("click", function () { dl.classList.toggle("dlopen"); paintD(); });
     paintD();
+  }
+
+  /* "What this selection says": show the headline, fold the rest behind a toggle. */
+  var read = document.getElementById("read");
+  if (read) {
+    var fixRead = function () {
+      var lis = read.querySelectorAll("ul li"), btn = read.querySelector(".rd-more");
+      if (lis.length < 2) { if (btn) btn.remove(); read.classList.remove("rd-collapsed"); return; }
+      if (!btn) {
+        btn = document.createElement("button"); btn.type = "button"; btn.className = "rd-more";
+        read.appendChild(btn);
+        read.classList.toggle("rd-collapsed", read.dataset.open !== "1");
+      }
+      var open = read.dataset.open === "1";
+      read.classList.toggle("rd-collapsed", !open);
+      btn.textContent = open ? "Show less ▴" : "Show " + (lis.length - 1) + " more ▾";
+    };
+    read.addEventListener("click", function (e) {
+      if (e.target.classList.contains("rd-more")) { read.dataset.open = read.dataset.open === "1" ? "0" : "1"; fixRead(); }
+    });
+    new MutationObserver(function () { fixRead(); }).observe(read, { childList: true });
+    fixRead();
   }
 
   stackUnderFilters();
